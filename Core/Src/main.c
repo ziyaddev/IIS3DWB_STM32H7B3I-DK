@@ -21,7 +21,7 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "iis3dwb.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -63,7 +63,11 @@ UART_HandleTypeDef huart1;
 SDRAM_HandleTypeDef hsdram1;
 
 /* USER CODE BEGIN PV */
-
+IIS3DWB_Handle_t iis3dwb = {
+    .hspi = &hspi1,
+    .cs_port = IIS3DWB_CS_GPIO_Port,
+    .cs_pin = IIS3DWB_CS_Pin
+};
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -134,17 +138,37 @@ int main(void)
   MX_USART1_UART_Init();
   MX_SPI1_Init();
   /* USER CODE BEGIN 2 */
+  IIS3DWB_Init(&iis3dwb);
 
+  // Configuration DMA pour SPI1
+  HAL_SPI_MspInit(&hspi1);
   /* USER CODE END 2 */
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
   while (1)
   {
+      float x, y, z;
+
+      // Remplir le buffer avec les échantillons
+      for(int i = 0; i < FFT_SIZE; i++) {
+          IIS3DWB_ReadAccel(&iis3dwb, &x, &y, &z);
+          iis3dwb.fft_buffer[i] = x;  // On analyse l'axe X
+          HAL_Delay(1);  // Attendre ~1ms pour avoir ~1kHz
+      }
+
+      // Traiter la FFT
+      IIS3DWB_ProcessFFT(&iis3dwb);
+
+      // Les résultats sont dans iis3dwb.fft_output
+      // Fréquence[i] = i * (SAMPLE_FREQ/FFT_SIZE)
+
+      HAL_Delay(100);
+  }
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
-  }
+
   /* USER CODE END 3 */
 }
 
