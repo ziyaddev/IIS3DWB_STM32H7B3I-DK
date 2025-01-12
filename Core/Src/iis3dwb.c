@@ -73,6 +73,25 @@ void IIS3DWB_ProcessFFT(IIS3DWB_Handle_t *dev)
     }
 }
 
+void IIS3DWB_PrintFFTResults(IIS3DWB_Handle_t *dev, UART_HandleTypeDef *huart)
+{
+	char buffer[50];
+	int len;
+
+	len = sprintf(buffer, "FFT Results : \r\n");
+	HAL_UART_Transmit(huart, (uint8_t*)buffer, len, HAL_MAX_DELAY);
+
+	for(int i = 0; i < 20; i++) {
+		float frequency = i * (SAMPLE_FREQ / (float)FFT_SIZE);
+		len = sprintf(buffer, "Freq %.1f Hz : Magnitude %.3f\r\n",
+					 frequency, dev->fft_output[i]);
+		HAL_UART_Transmit(huart, (uint8_t*)buffer, len, HAL_MAX_DELAY);
+	}
+
+	len = sprintf(buffer, "\r\n");
+	HAL_UART_Transmit(huart, (uint8_t*)buffer, len, HAL_MAX_DELAY);
+}
+
 // SPI1 pinout :
 // SCK  -> PA5 (N5) -> Pin 1 of the U20 chip on the bottom layer
 // MISO -> PB4 (B5) -> R39 resistor on the top layer

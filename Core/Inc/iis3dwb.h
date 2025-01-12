@@ -3,6 +3,7 @@
 
 #include "main.h"
 #include "arm_math.h"
+#include <stdio.h>
 
 // Registres IIS3DWB
 #define IIS3DWB_WHO_AM_I          0x0F
@@ -28,5 +29,6 @@ typedef struct {
 HAL_StatusTypeDef IIS3DWB_Init(IIS3DWB_Handle_t *dev);
 HAL_StatusTypeDef IIS3DWB_ReadAccel(IIS3DWB_Handle_t *dev, float *x, float *y, float *z);
 void IIS3DWB_ProcessFFT(IIS3DWB_Handle_t *dev);
+void IIS3DWB_PrintFFTResults(IIS3DWB_Handle_t *dev, UART_HandleTypeDef *huart);
 
 #endif

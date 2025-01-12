@@ -163,7 +163,10 @@ int main(void)
       // Les résultats sont dans iis3dwb.fft_output
       // Fréquence[i] = i * (SAMPLE_FREQ/FFT_SIZE)
 
-      HAL_Delay(100);
+      // Print results
+      IIS3DWB_PrintFFTResults(&iis3dwb, &huart1);
+
+      HAL_Delay(500);
   }
     /* USER CODE END WHILE */
 
