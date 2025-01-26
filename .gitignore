@@ -2,5 +2,6 @@
 .settings
 [Rr]elease
 [Dd]ebug
-.launch
+*.launch
 
+.DS_Store

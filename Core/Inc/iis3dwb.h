@@ -4,14 +4,7 @@
 #include "main.h"
 #include "arm_math.h"
 #include <stdio.h>
-
-// Registres IIS3DWB
-#define IIS3DWB_WHO_AM_I          0x0F
-#define IIS3DWB_CTRL1_XL         0x10
-#define IIS3DWB_CTRL3_C          0x12
-#define IIS3DWB_OUTX_L_XL        0x28
-#define IIS3DWB_OUTY_L_XL        0x2A
-#define IIS3DWB_OUTZ_L_XL        0x2C
+#include "iis3dwb_registers.h"
 
 // Configuration
 #define FFT_SIZE                 1024

@@ -19,13 +19,29 @@ static HAL_StatusTypeDef IIS3DWB_ReadRegs(IIS3DWB_Handle_t *dev, uint8_t reg, ui
     return status;
 }
 
+//static HAL_StatusTypeDef IIS3DWB_ReadRegsTransReicv(IIS3DWB_Handle_t *dev, uint8_t reg, uint8_t *data, uint16_t len)
+//{
+//    uint8_t addr = reg | 0x80;
+//    HAL_GPIO_WritePin(dev->cs_port, dev->cs_pin, GPIO_PIN_RESET);
+//    HAL_StatusTypeDef status = HAL_SPI_TransmitReceive(dev->hspi, &addr, data, len, HAL_MAX_DELAY);
+////    HAL_SPI_Transmit(dev->hspi, &addr, 1, HAL_MAX_DELAY);
+////    HAL_StatusTypeDef status = HAL_SPI_Receive(dev->hspi, data, len, HAL_MAX_DELAY);
+//    HAL_GPIO_WritePin(dev->cs_port, dev->cs_pin, GPIO_PIN_SET);
+//    return status;
+//}
+
+
 HAL_StatusTypeDef IIS3DWB_Init(IIS3DWB_Handle_t *dev)
 {
     // Reset the device
     IIS3DWB_WriteReg(dev, IIS3DWB_CTRL3_C, 0x01);
+	// Wait 100ms to let the device download its calibration coeff's
     HAL_Delay(100);
 
-    // Configure pour 26.667 kHz, ±2g
+    // enable 3-axis mode
+    IIS3DWB_WriteReg(dev, IIS3DWB_CTRL6_C, 0x00);
+
+    // Enable accelerometer, Configure pour 26.667 kHz, ±2g
     IIS3DWB_WriteReg(dev, IIS3DWB_CTRL1_XL, 0xA0);
 
     // Initialize FFT structure
@@ -37,6 +53,13 @@ HAL_StatusTypeDef IIS3DWB_Init(IIS3DWB_Handle_t *dev)
 HAL_StatusTypeDef IIS3DWB_ReadAccel(IIS3DWB_Handle_t *dev, float *x, float *y, float *z)
 {
     uint8_t data[6];
+    uint8_t acc_data_status = 0;
+
+    while ((acc_data_status & 0x01) != 0x01)
+    {
+    	IIS3DWB_ReadRegs(dev, IIS3DWB_STATUS_REG, &acc_data_status, 1);
+    }
+
     HAL_StatusTypeDef status = IIS3DWB_ReadRegs(dev, IIS3DWB_OUTX_L_XL, data, 6);
     
     if (status == HAL_OK) {
@@ -95,5 +118,5 @@ void IIS3DWB_PrintFFTResults(IIS3DWB_Handle_t *dev, UART_HandleTypeDef *huart)
 // SPI1 pinout :
 // SCK  -> PA5 (N5) -> Pin 1 of the U20 chip on the bottom layer
 // MISO -> PB4 (B5) -> R39 resistor on the top layer
-// MOSI -> PB5 (E7) -> Pin 13 of the U20 chip on the bottom layer
+// Pin 14 -> MOSI -> PB5 (E7) -> Pin 13 of the U20 chip on the bottom layer
 // CS   -> PA4 (L6) -> Arduino connector CN20 pin 1 (Solder SB45 pad to enable)

@@ -22,6 +22,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "iis3dwb.h"
+//#include "iis3dwb_reg.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -166,7 +167,7 @@ int main(void)
       // Print results
       IIS3DWB_PrintFFTResults(&iis3dwb, &huart1);
 
-      HAL_Delay(500);
+//      HAL_Delay(500);
   }
     /* USER CODE END WHILE */
 
