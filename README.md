@@ -13,6 +13,29 @@ Real-time vibration analysis system using the IIS3DWB high-performance accelerom
 - Hardware platform: STM32H7B3I-DK development board
 - Sensor: IIS3DWB MEMS accelerometer
 
+## Project pictures
+
+| *Back view*               | *MOSI & SCK connections*  |
+|:-------------------------:|:-------------------------:|
+| ![](images/IMG_6894.jpeg) | ![](images/IMG_6893.jpeg) |
+
+--------------------------------------------------------
+
+| *IIS3DWB accelerometer*   | *STM32H7B3I-DK Dev Kit*  |
+|:-------------------------:|:-------------------------:|
+| ![](images/IMG_6891.jpeg) | ![](images/IMG_6890.jpeg) |
+
+--------------------------------------------------------
+
+| *Imporovised workspace*   | *SPI transactions overview with a logic analyzer (click to enlarge)*  |
+|:-------------------------:|:-------------------------:|
+| ![](images/IMG_6892.jpeg) | [![](images/Screenshot_2025-01-26_22.42.33.png)](images/Screenshot_2025-01-26_22.42.33.png) |
+
+| *Detailed SPI transactions with a logic analyzer & serial output of FFT analysis results (click to enlarge)*  |
+|:-------------------------:|
+| [![](images/Screenshot_2025-01-26_22.42.57.png)](images/Screenshot_2025-01-26_22.42.57.png) |
+
+
 ## Hardware Setup
 
 ### Required Components
@@ -21,14 +44,14 @@ Real-time vibration analysis system using the IIS3DWB high-performance accelerom
 - Connecting wires
 
 ### Connections
-| IIS3DWB Pin | STM32H7B3I-DK Pin |
-|-------------|-------------------|
-| SCK         | SPI1_SCK         |
-| MISO        | SPI1_MISO        |
-| MOSI        | SPI1_MOSI        |
-| CS          | User defined GPIO |
-| VDD         | 3.3V             |
-| GND         | GND              |
+| IIS3DWB Pin | STM32H7B3I-DK Pin | GPIO Pin |
+|-------------|-------------------|----------|
+| SCK         | SPI1_SCK          | `PA5`    |
+| MOSI        | SPI1_MOSI         | `PB5`    |
+| MISO        | SPI1_MISO         | `PB4`    |
+| CS          | IIS3DWB_CS        | `PA4`    |
+| VDD         | 3.3V              | `3.3v`   |
+| GND         | GND               | `GND`    |
 
 ## Software Requirements
 
@@ -43,10 +66,11 @@ Real-time vibration analysis system using the IIS3DWB high-performance accelerom
 - Data Size: 8 bits
 - First Bit: MSB First
 - Prescaler: 8 (8 MBits/s)
-- Clock Polarity (CPOL): Low
-- Clock Phase (CPHA): 1 Edge
+- SPI Mode : 0 (it could also be 3)
+  - Clock Polarity (CPOL): Low
+  - Clock Phase (CPHA): 1 Edge
 
-### DMA Settings
+### DMA Settings (not yet implemented)
 - SPI1_TX: DMA1 Stream 0
 - SPI1_RX: DMA1 Stream 1
 - Priority: High
@@ -57,7 +81,7 @@ Real-time vibration analysis system using the IIS3DWB high-performance accelerom
 
 The project implements the following processing chain:
 1. High-speed data acquisition from IIS3DWB
-2. DMA transfer to memory
+2. DMA transfer to memory (to do)
 3. Hanning window application
 4. Real FFT computation
 5. Magnitude calculation
